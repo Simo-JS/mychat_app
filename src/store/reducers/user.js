@@ -1,4 +1,4 @@
-import { SET_USER } from "../actions/user";
+import { SET_USER, UNSET_USER } from "../actions/user";
 
 const initialState = {
   user: null,
@@ -10,6 +10,11 @@ const reducer = (state = initialState, action) => {
     case SET_USER:
       return {
         user: action.user,
+        isLoading: false
+      };
+    case UNSET_USER:
+      return {
+        ...initialState,
         isLoading: false
       };
     default:

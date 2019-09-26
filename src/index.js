@@ -34,6 +34,9 @@ const Root = props => {
       if (user) {
         dispatch(userActions.setUser(user));
         props.history.push("/");
+      } else {
+        dispatch(userActions.unsetUser());
+        props.history.push("/login");
       }
     });
   }, [dispatch, props.history]);

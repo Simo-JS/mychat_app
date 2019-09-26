@@ -36,7 +36,7 @@ const Login = props => {
       justify="center"
       alignItems="center"
     >
-      <Grid item xs={4}>
+      <Grid item xs={12} sm={6} md={4}>
         <Typography variant="h4">Sign up to MyChatte</Typography>
         <Paper style={{ padding: 10 }}>
           <form>
