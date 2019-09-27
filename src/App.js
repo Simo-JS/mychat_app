@@ -1,28 +1,37 @@
 import React from "react";
 import ColorPanel from "./components/ColorPanel/ColorPanel";
 
+import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import SidePanel from "./components/SidePanel/SidePanel";
-import Messages from "./components/Messages/Messages";
-import MetaPanel from "./components/MetaPanel/MetaPanel";
 
-const App = () => {
+import Messages from "./components/Messages/Messages";
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1
+  },
+  paper: {
+    padding: theme.spacing(2)
+  }
+});
+
+const App = ({ classes }) => {
   return (
-    <Grid container>
-      <Grid item xs={3}>
-        <SidePanel />
+    <div className={classes.root}>
+      <Grid container spacing={2}>
+        <Grid item xs={1}>
+          <ColorPanel />
+        </Grid>
+        <Grid item xs={2}>
+          <SidePanel />
+        </Grid>
+        <Grid item xs={9}>
+          <Messages />
+        </Grid>
       </Grid>
-      <Grid item xs={3}>
-        <ColorPanel />
-      </Grid>
-      <Grid item xs={3}>
-        <Messages />
-      </Grid>
-      <Grid item xs={3}>
-        <MetaPanel />
-      </Grid>
-    </Grid>
+    </div>
   );
 };
 
-export default App;
+export default withStyles(styles)(App);

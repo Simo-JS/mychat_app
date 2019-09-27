@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Drawer,
   List,
   ListItemText,
   ListItem,
@@ -24,24 +23,22 @@ const SidePanel = props => {
   };
 
   return (
-    <Drawer variant="persistent" open>
-      <List>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <PersonIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText>Mohamed</ListItemText>
-        </ListItem>
-        <Divider />
-        <Channels />
-        <Divider />
-        <ListItem button onClick={logout}>
-          <ListItemText>Logout</ListItemText>
-        </ListItem>
-      </List>
-    </Drawer>
+    <List>
+      <ListItem>
+        <ListItemAvatar>
+          <Avatar>
+            <PersonIcon />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText>Mohamed</ListItemText>
+      </ListItem>
+      <Divider />
+      <Channels />
+      <Divider />
+      <ListItem button onClick={logout}>
+        <ListItemText>Logout</ListItemText>
+      </ListItem>
+    </List>
   );
 };
 
