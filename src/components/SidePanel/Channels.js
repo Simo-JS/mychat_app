@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ListItem,
   ListItemIcon,
@@ -19,27 +19,34 @@ import ForumIcon from "@material-ui/icons/Forum";
 import AddIcon from "@material-ui/icons/Add";
 
 import firebase from "../../firebase";
+import * as channelsActions from "../../store/actions/channels";
 
 const Channels = props => {
   const user = useSelector(state => state.user.user);
-  const [channels, setChannels] = useState([]);
+  const availableChannels = useSelector(
+    state => state.channels.availableChannels
+  );
+  const currentChannel = useSelector(state => state.channels.currentChannel);
   const [name, setName] = useState("");
   const [details, setDetails] = useState("");
   const [open, setOpen] = useState(false);
   const [channelsRef] = useState(firebase.database().ref("channels"));
+  const [firstLoad, setFirstLoad] = useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    let tempChannels = [];
-    channelsRef.on("child_added", snap => {
-      tempChannels.push(snap.val());
-    });
-    setChannels(tempChannels);
-  }, [channelsRef, setChannels]);
+    if (firstLoad && availableChannels.length > 0) {
+      dispatch(channelsActions.setCurrentChannel(availableChannels[0]));
+      setFirstLoad(false);
+    }
+  }, [dispatch, availableChannels, firstLoad]);
 
   const addHandle = () => {
     const { displayName, photoURL } = user;
     const key = channelsRef.push().key;
     channelsRef.child(key).set({
+      id: key,
       name,
       details,
       createdBy: {
@@ -68,10 +75,17 @@ const Channels = props => {
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
-      {channels.length > 0 && (
+      {currentChannel && availableChannels && availableChannels.length > 0 && (
         <List>
-          {channels.map((channel, i) => (
-            <ListItem key={i}>
+          {availableChannels.map((channel, i) => (
+            <ListItem
+              button
+              key={i}
+              selected={channel.id === currentChannel.id}
+              onClick={() => {
+                dispatch(channelsActions.setCurrentChannel(channel));
+              }}
+            >
               <ListItemText>{channel.name}</ListItemText>
             </ListItem>
           ))}

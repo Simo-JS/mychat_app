@@ -13,12 +13,15 @@ import Login from "./components/Login";
 
 import * as serviceWorker from "./serviceWorker";
 import * as userActions from "./store/actions/user";
+import * as channelsActions from "./store/actions/channels";
 
 import userReducer from "./store/reducers/user";
+import channelsReducer from "./store/reducers/channels";
 import Spinnner from "./components/Spinner";
 
 const rootReducer = combineReducers({
-  user: userReducer
+  user: userReducer,
+  channels: channelsReducer
 });
 
 const store = createStore(
@@ -29,6 +32,24 @@ const store = createStore(
 const Root = props => {
   const isLoading = useSelector(state => state.user.isLoading);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const channelsRef = firebase
+      .database()
+      .ref("channels")
+      .on("value", snap => {
+        const snapshot = snap.val();
+        let availableChannels = [];
+        for (let key in snapshot) {
+          availableChannels.push(snapshot[key]);
+        }
+        dispatch(channelsActions.setAvailableChannels(availableChannels));
+      });
+    return () => {
+      channelsRef.off();
+    };
+  }, [dispatch]);
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
