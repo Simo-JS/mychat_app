@@ -14,14 +14,18 @@ import Login from "./components/Login";
 import * as serviceWorker from "./serviceWorker";
 import * as userActions from "./store/actions/user";
 import * as channelsActions from "./store/actions/channels";
+import * as messagesActions from "./store/actions/messages";
 
 import userReducer from "./store/reducers/user";
 import channelsReducer from "./store/reducers/channels";
+import messagesReducer from "./store/reducers/messages";
+
 import Spinnner from "./components/Spinner";
 
 const rootReducer = combineReducers({
   user: userReducer,
-  channels: channelsReducer
+  channels: channelsReducer,
+  messages: messagesReducer
 });
 
 const store = createStore(
@@ -32,6 +36,30 @@ const store = createStore(
 const Root = props => {
   const isLoading = useSelector(state => state.user.isLoading);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const messagesListener = firebase
+      .database()
+      .ref("messages")
+      .on("value", snap => {
+        let messagesObject = {};
+        const snapshot = snap.val();
+        for (let channelId in snapshot) {
+          let messages = [];
+          for (let key in snapshot[channelId]) {
+            messages.push({
+              id: key,
+              ...snapshot[channelId][key]
+            });
+          }
+          messagesObject[channelId] = messages;
+        }
+        dispatch(messagesActions.setMessages(messagesObject));
+      });
+    return () => {
+      messagesListener.off();
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     const channelsRef = firebase
